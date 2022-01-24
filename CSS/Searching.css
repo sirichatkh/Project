@@ -1,0 +1,45 @@
+header {
+   font-family: 'Kanit', sans-serif;
+  }
+  nav .navbar-toggler {
+   margin-left: 5%;
+  }
+  nav .navbar-brand {
+   margin-left: 5%;
+  }
+  nav .nav-item {
+   padding-left: 20px;
+  }
+  nav .nav-pills {
+   padding-right: 10%;
+  }
+  article {
+   font-family: 'Kanit', sans-serif;
+   margin: 5%;
+  }
+  h1 {
+   text-align: center;
+   padding-top: 10%;
+  }
+  article .Form_Cate {
+   display: inline;
+   margin-top: 3000px;
+   padding: 2em;
+  }
+  .Form_S form button {
+   border-radius: 400px
+  }
+  article .floor {
+   float: right;
+  }
+  article .table {
+   width: 40%;
+   margin: auto;
+   padding: 2em;
+   text-align: center;
+  }
+  footer {
+   font-family: 'Kanit', sans-serif;
+  }
+  
+  

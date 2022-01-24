@@ -1,0 +1,31 @@
+header {
+ font-family: 'Kanit', sans-serif;
+}
+nav .navbar-toggler{
+ margin-left: 5%;
+}
+nav .navbar-brand{
+ margin-left: 5%;
+}
+nav .nav-item {
+ padding-left: 20px;
+}
+nav .nav-pills {
+ padding-right: 10%;
+}
+article {
+ font-family: 'Kanit', sans-serif;
+ margin: 5%;
+}
+article h1 {
+ text-align: center;
+}
+article .Form_E Form b {
+    margin: 10%;
+}
+article .Form_E Form button {
+    display: inline-block;
+}
+footer {
+ font-family: 'Kanit', sans-serif;
+}

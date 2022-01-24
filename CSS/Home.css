@@ -1,0 +1,39 @@
+header {
+ font-family: 'Kanit', sans-serif;
+}
+nav .navbar-toggler{
+ margin-left: 5%;
+}
+nav .navbar-brand{
+ margin-left: 5%;
+}
+nav .nav-item {
+ padding-left: 20px;
+}
+nav .nav-pills {
+ padding-right: 10%;
+}
+article {
+ font-family: 'Kanit', sans-serif;
+ margin-top: 3%;
+}
+article nav .navbar {
+ position: absolute;
+ z-index: auto;
+}
+article h1 {
+ margin: 5% 40%;
+}
+article h3 {
+ margin-left: 35%;
+}
+article #Img-HoB{
+ margin-left: 35%;
+}
+article .Google_Map {
+ margin: auto 10%;
+}
+footer {
+ font-family: 'Kanit', sans-serif;
+}
+

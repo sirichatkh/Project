@@ -1,0 +1,38 @@
+nav .navbar-toggler{
+  margin-left: 5%;
+}
+nav .navbar-brand{
+  margin-left: 5%;
+}
+nav .nav-item {
+  padding-left: 20px;
+}
+nav .nav-pills {
+  padding-right: 10%;
+}
+article  {
+  margin: 5%;
+}
+article .row {
+  width: 100%;
+}
+article .row .col {
+  padding: 8px;
+}
+article .row .col .card a {
+  text-decoration: none;
+}
+article .row .col .card a:link{
+  color: black;
+}
+article .row .col .card a:visited{
+  color: black;
+}
+article .row .col .card a:hover{
+  color: black;
+}
+article .row .col .card a:active{
+  color: black;
+}
+
+
