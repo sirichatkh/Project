@@ -3,7 +3,7 @@ session_start();
 date_default_timezone_set('Asia/Bangkok');
 
 define("title", 'College of Computing Tour');
-define("url", 'http://localhost/Project_M/');
+define("url", 'https://collegeofcomputingtour.herokuapp.com/');
 define("host", 'localhost');
 define("user", 'root');
 define("pass", '');
