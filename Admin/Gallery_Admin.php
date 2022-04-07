@@ -1,85 +1,106 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Witthayawiphat : ข้อมูลเเกลลอรี่</title>
-    <link rel="stylesheet" href="CSS/Gallery_Admin.css">
-    <!-- Bootstrap CSS -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-F3w7mX95PdgyTmZZMECAngseQB83DfGTowi0iMjiWaeVhAn4FJkqJByhZMI3AhiU" crossorigin="anonymous">
-</head>
-<body>
-    <header>
-        <nav class="navbar fixed-top navbar-expand-lg navbar-light bg-light">
-            <div class="container-fluid">
-            <a class="navbar-brand" href="Floorplan_Admin.php">Witthayawiphat</a>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-            <ul class="nav nav-pills">
-                <li class="nav-item">
-                    <a class="nav-link" href="Floorplan_Admin.php">ข้อมูลเเผงผังชั้น</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="Event_Admin.php">ข้อมูลกิจกรรม</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="Room_Admin.php">ข้อมูลห้อง</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="Staff_Admin.php">ข้อมูลบุคลากร</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link active" aria-current="page" href="Gallery_Admin.php">ข้อมูลเเกลลอรี่</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="SignIn.php">ออกจากระบบ</a>
-                </li>
-            </ul>
-        </nav>
-    </header>
-    <article>
-        <div class='Add_btn'>
-            <a href='Gallery_Func/Insert_G_Ad.php'><button type='button' class='btn btn-outline-primary'>เพิ่มข้อมูลเเกลลอรี่</button></a>
+<?php
+require_once("../_config.php");
+checkLogin();
+$title = "แกลลอรี่";
+require_once("_header.php");
+?>
+<!-- Bootstrap CSS -->
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-F3w7mX95PdgyTmZZMECAngseQB83DfGTowi0iMjiWaeVhAn4FJkqJByhZMI3AhiU" crossorigin="anonymous">
+
+<div class="container">
+  <div class="row justify-content-center">
+    <div class="col-md-12">
+      <div class="card">
+        <div class="card-header">
+          <button type="button" class="btn btn-outline-primary float-end" onclick="add()">
+            เพิ่ม<?php echo $title; ?>
+          </button>
+          <h5 class="card-title mt-1"><?php echo $title; ?></h5>
         </div>
-        <?php
-        $conn=mysqli_connect("localhost","root","","witthayawiphat");
-
-        if (mysqli_connect_errno()){
-            echo "Failed to connect to MySQL: " . mysqli_connect_error();
-            die();
-        }
-
-        $sql = "SELECT * FROM gallery";
-        $result = mysqli_query($conn,$sql);
-        while($row = mysqli_fetch_array($result)){
-
-            $G_Image = $row['G_Image'];
-            $G_Name = $row['G_Name'];
-            $G_Timestamp = $row['G_Timestamp'];
-            
-        ?>
-            <table class='table'>
-                <thead>
-                    <tr>
-                        <th>รูปภาพ</th>
-                        <th>ชื่อรูปภาพ</th>
-                        <th>อัพเมื่อวันที่</th>
-                    <tr>
-                </thead>
-                    <tr>
-                        <td><?php echo $row['G_Image']; ?></td> 
-                        <td><?php echo $row['G_Name']; ?></td>
-                        <td><?php echo $row['G_Timestamp']; ?></td>   
-                        <td><a href='Gallery_Func/Edit_G_Ad.php?edit=<?php echo $row['G_ID']; ?>'><button type='button' class='btn btn-outline-warning'>เเก้ไข</button></a></td>
-                        <td><a href='Gallery_Func/Del_G_Ad.php?del=<?php echo $row['G_ID']; ?>'><button type='button' class='btn btn-outline-danger'>ลบ</button></a></td>
-                    </tr>
+        <div class="card-body">
+          <div id="loading" style="display:none!important;">
+            <div class="d-flex justify-content-center">
+              <div class="spinner-border" role="status">
+                  <span class="visually-hidden">Loading...</span>
+              </div>
+            </div>
+          </div>
+          <div class="table-responsive p-2" id="table">
+            <table class="table table-light table-hover" id="datatable">
+              <thead>
+                <tr>
+                  <th scope="col" width="10%" data-orderable="false"></th>
+                  <th scope="col" width="20%" data-orderable="false">รูปภาพ</th>
+                  <th scope="col" width="25%">ชื่อรูปภาพ</th>
+                  <th scope="col" width="20%">อัปเดตเมื่อวันที่</th>
+                  <th scope="col" width="10%" data-orderable="false"></th>
+                  <th scope="col" width="10%" data-orderable="false"></th>
+                </tr>
+                <tr>
+                <?php
+                  $sql = "SELECT * FROM gallery";
+                  $result = mysqli_query($conn,$sql);
+                  while($row = mysqli_fetch_array($result)){ 
+                ?>
+                  <td scope="col" width="10%" data-orderable="false"><?php echo $row['G_ID']; ?></td>
+                  <td scope="col" width="20%" data-orderable="false"><img src="../<?php echo $row['G_Image']; ?>" style="max-width:150px;max-height: 120px;"></td>                     <td scope="col" width="25%"><?php echo $row['G_Name']; ?></td>
+                  <td scope="col" width="20%"><?php echo $row['G_Timestamp']; ?></td>   
+                  <td scope="col" width="10%" data-orderable="false"><a href='Gallery_Func/Edit_G_Ad.php?edit=<?php echo $row['G_ID']; ?>'><button type='button' class='btn btn-outline-warning'>เเก้ไข</button></a></td>
+                  <td scope="col" width="10%" data-orderable="false"><a href='Gallery_Func/Del_G_Ad.php?del=<?php echo $row['G_ID']; ?>'><button type='button' class='btn btn-outline-danger'>ลบ</button></a></td>
+                </tr>
+                <?php
+                }
+                ?> 
+              </thead>
             </table>
-        <?php
-        }
-        ?> 
-    </article>
+          </div> 
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="modal fade" id="modal" tabindex="-1" aria-labelledby="modalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="modalLabel">TITLE</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      
+      <div id="modalLoading" style="display:none!important;">
+        <div class="modal-body">
+          <div class="d-flex justify-content-center">
+            <div class="spinner-border" role="status">
+                <span class="visually-hidden">Loading...</span>
+            </div>
+          </div>
+        </div>
+      </div>
+      <form id="form">
+        <div class="modal-body">
+          <div id="message"></div>
+          <input type="hidden" name="action" id="action">
+          <input type="hidden" name="G_ID" id="G_ID">
+            <div class="mb-3">
+              <label for="G_Image" class="form-label">ไฟล์ภาพ <small class="text-muted">รองรับเฉพาะไฟล์รูปภาพนามสกุล .jpg .png</small></label> 
+              <input class="form-control" type="file" id="G_Image" name="G_Image" accept="image/*" onchange="checkSize(this)">
+              <div id="G_ImageFeedback" class="invalid-feedback"></div>
+              <img class="mt-2" id="G_ImageShow" style="max-width:450px;max-height: 220px;">
+            </div>
+            <div class="mb-3">
+              <label for="G_Name" class="form-label">ชื่อ</label>
+              <input type="text" class="form-control" id="G_Name" name="G_Name">
+            </div>
+        </div>
+        <div class="modal-footer justify-content-center">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">ปิด</button>
+          <button type="submit" class="btn btn-primary">บันทึก</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
     <!-- Bootstrap Bundle with Popper -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.1/dist/js/bootstrap.bundle.min.js" integrity="sha384-/bQdsTh/da6pkI1MST/rWKFNjaCP5gBSY4sEBT38Q/9RBh9AH40zEOg7Hlq2THRZ" crossorigin="anonymous"></script>
 
@@ -89,5 +110,4 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.1/dist/js/bootstrap.min.js" integrity="sha384-skAcpIdS7UcVUC05LJ9Dxay8AXcDYfBJqt1CJ85S/CFujBsIzCIv+l9liuYLaMQ/" crossorigin="anonymous"></script>
     -->
 
-</body>
-</html>
+<?php require_once("_footer.php");?>

@@ -1,88 +1,112 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Witthayawiphat : ข้อมูลกิจกรรม</title>
-    <link rel="stylesheet" href="CSS/Event_Admin.css">
-    <!-- Bootstrap CSS -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-F3w7mX95PdgyTmZZMECAngseQB83DfGTowi0iMjiWaeVhAn4FJkqJByhZMI3AhiU" crossorigin="anonymous">
-</head>
-<body>
-    <header>
-        <nav class="navbar fixed-top navbar-expand-lg navbar-light bg-light">
-            <div class="container-fluid">
-            <a class="navbar-brand" href="Floorplan_Admin.php">Witthayawiphat</a>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-            <ul class="nav nav-pills">
-                <li class="nav-item">
-                    <a class="nav-link" href="Floorplan_Admin.php">ข้อมูลเเผงผังชั้น</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link active" aria-current="page" href="Event_Admin.php">ข้อมูลกิจกรรม</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="Room_Admin.php">ข้อมูลห้อง</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="Staff_Admin.php">ข้อมูลบุคลากร</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="Gallery_Admin.php">ข้อมูลเเกลลอรี่</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="SignIn.php">ออกจากระบบ</a>
-                </li>
-            </ul>
-        </nav>
-    </header>
-    <article>
-        <div class='Add_btn'>
-            <a href='Event_Func/Insert_E_Ad.php'><button type='button' class='btn btn-outline-primary'>เพิ่มข้อมูลกิจกรรม</button></a>
+<?php
+require_once("../_config.php");
+/*checkLogin();*/
+$title = "ข้อมูลกิจกรรม";
+require_once("_header.php");
+?>
+<!-- Bootstrap CSS -->
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-F3w7mX95PdgyTmZZMECAngseQB83DfGTowi0iMjiWaeVhAn4FJkqJByhZMI3AhiU" crossorigin="anonymous">
+        
+<div class="container">
+  <div class="row justify-content-center">
+    <div class="col-md-12">
+      <div class="card">
+        <div class="card-header">
+          <button type="button" class="btn btn-outline-primary float-end" onclick="add()">
+            เพิ่ม<?php echo $title; ?>
+          </button>
+          <h5 class="card-title mt-1"><?php echo $title; ?></h5>
         </div>
-        <?php
-        $conn=mysqli_connect("localhost","root","","witthayawiphat");
-
-        if (mysqli_connect_errno()){
-            echo "Failed to connect to MySQL: " . mysqli_connect_error();
-            die();
-        }
-
-        $sql = "SELECT * FROM event";
-        $result = mysqli_query($conn,$sql);
-        while($row = mysqli_fetch_array($result)){
-
-            $E_Date = $row['E_Date'];
-            $E_Time = $row['E_Time'];
-            $E_Name = $row['E_Name'];
-            $E_Description = $row['E_Description'];
-            
-        ?>
-            <table class='table'>
-                <thead>
-                    <tr>
-                        <th>วันที่</th>
-                        <th>เวลา</th>
-                        <th>ชื่อกิจกรรม</th>
-                        <th>รายละเอียดกิจกรรม</th>
-                    <tr>
-                </thead>
-                    <tr>
-                        <td><?php echo $row['E_Date']; ?></td> 
-                        <td><?php echo $row['E_Time']; ?></td> 
-                        <td><?php echo $row['E_Name']; ?></td>
-                        <td><?php echo $row['E_Description']; ?></td>   
-                        <td><a href='Event_Func/Edit_E_Ad.php?edit=<?php echo $row['E_ID']; ?>'><button type='button' class='btn btn-outline-warning'>เเก้ไข</button></a></td>
-                        <td><a href='Event_Func/Del_E_Ad.php?del=<?php echo $row['E_ID']; ?>'><button type='button' class='btn btn-outline-danger'>ลบ</button></a></td>
-                    </tr>
+        <div class="card-body">
+          <div id="loading" style="display:none!important;">
+            <div class="d-flex justify-content-center">
+              <div class="spinner-border" role="status">
+                  <span class="visually-hidden">Loading...</span>
+              </div>
+            </div>
+          </div>
+          <div class="table-responsive p-2" id="table">
+            <table class="table table-light table-hover" id="datatable">
+              <thead>
+                <tr>
+                  <th scope="col" width="10%" data-orderable="false"></th>
+                  <th scope="col" width="10%" data-orderable="false">รูปภาพกิจกรรม</th>
+                  <th scope="col" width="15%">วันที่</th>
+                  <th scope="col" width="10%">เวลา</th>
+                  <th scope="col" width="20%">ชื่อกิจกรรม</th>
+                  <th scope="col" width="20%">รายละเอียดกิจกรรม</th>
+                  <th scope="col" width="10%" data-orderable="false"></th>
+                  <th scope="col" width="10%" data-orderable="false"></th>
+                </tr>
+                <tr>
+                <?php
+                  $sql = "SELECT * FROM event";
+                  $result = mysqli_query($conn,$sql);
+                  while($row = mysqli_fetch_array($result)){
+                ?>
+                  <td scope="col" width="10%" data-orderable="false"><?php echo $row['E_ID']; ?></td>
+                  <td scope="col" width="10%" data-orderable="false"><img src="../<?php echo $row['E_Image']; ?>" style="max-width:150px;max-height: 120px;"></td>
+                  <td scope="col" width="15%"><?php echo $row['E_Date']; ?></td> 
+                  <td scope="col" width="10%"><?php echo $row['E_Time']; ?></td> 
+                  <td scope="col" width="20%"><?php echo $row['E_Name']; ?></td>
+                  <td scope="col" width="20%"><?php echo $row['E_Description']; ?></td>   
+                  <td scope="col" width="10%"><a href='Event_Func/Edit_E_Ad.php?edit=<?php echo $row['E_ID']; ?>'><button type='button' class='btn btn-outline-warning'>เเก้ไข</button></a></td>
+                  <td scope="col" width="10%"><a href='Event_Func/Del_E_Ad.php?del=<?php echo $row['E_ID']; ?>'><button type='button' class='btn btn-outline-danger'>ลบ</button></a></td>
+                </tr>
+                <?php
+                }
+                ?> 
+              </thead>
             </table>
-        <?php
-        }
-        ?> 
-    </article>
+          </div> 
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="modal fade" id="modal">
+  <div class="modal-dialog modal-xl modal-dialog-scrollable">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="modalLabel">TITLE</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      
+      <div id="modalLoading" style="display:none!important;">
+        <div class="modal-body">
+          <div class="d-flex justify-content-center">
+            <div class="spinner-border" role="status">
+                <span class="visually-hidden">Loading...</span>
+            </div>
+          </div>
+        </div>
+      </div>
+        <div class="modal-body">
+          <form id="form">
+          <div id="message"></div>
+          <input type="hidden" name="action" id="action">
+          <input type="hidden" name="E_ID" id="E_ID">
+            <div class="mb-3">
+              <label for="E_Image" class="form-label">รูปภาพหลัก <small class="text-muted">รองรับเฉพาะไฟล์รูปภาพนามสกุล .jpg .png</small></label> 
+              <input class="form-control" type="file" id="E_Image" name="E_Image" accept="image/*" onchange="checkSize(this)">
+              <div id="E_ImageFeedback" class="invalid-feedback"></div>
+              <img class="mt-2" id="E_Imageshow" style="max-width:450px;max-height: 220px;">
+            </div>
+            <div class="mb-3">
+              <label for="E_Images" class="form-label">รูปภาพอื่น ๆ <small class="text-muted">รองรับเฉพาะไฟล์รูปภาพนามสกุล .jpg .png</small></label> 
+              <input class="form-control" type="file" id="E_Images" name="E_Images[]" accept="image/*" onchange="checkSizes(this)" multiple>
+              <div id="E_ImagesFeedback" class="invalid-feedback"></div>
+              <label class="form-label mb-0" id="LabelE_ImagesNew" style="display:none">ภาพอัพโหลดใหม่</label>
+              <div class="row" id="E_ImagesNew"></div>
+              <label class="form-label mb-0" id="LabelE_ImagesOld" style="display:none">ภาพเดิม</label>
+              <div class="row" id="E_ImagesOld"></div>
+            </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
     <!-- Bootstrap Bundle with Popper -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.1/dist/js/bootstrap.bundle.min.js" integrity="sha384-/bQdsTh/da6pkI1MST/rWKFNjaCP5gBSY4sEBT38Q/9RBh9AH40zEOg7Hlq2THRZ" crossorigin="anonymous"></script>
 
@@ -92,5 +116,4 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.1/dist/js/bootstrap.min.js" integrity="sha384-skAcpIdS7UcVUC05LJ9Dxay8AXcDYfBJqt1CJ85S/CFujBsIzCIv+l9liuYLaMQ/" crossorigin="anonymous"></script>
     -->
 
-</body>
-</html>
+<?php require_once("_footer.php");?>

@@ -1,176 +1,233 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Witthayawiphat : ค้นหา</title>
-    <link rel="stylesheet" href="CSS/Searching.css">
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Kanit">
-    <!-- Bootstrap CSS -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-F3w7mX95PdgyTmZZMECAngseQB83DfGTowi0iMjiWaeVhAn4FJkqJByhZMI3AhiU" crossorigin="anonymous">
-</head>
-<body>
-    <header>
-        <nav class="navbar fixed-top navbar-expand-lg navbar-light bg-light">
-            <div class="container-fluid">
-            <a class="navbar-brand" href="index.php">Witthayawiphat</a>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-            <ul class="nav nav-pills">
-                <li class="nav-item">
-                    <a class="nav-link" href="index.php">หน้าหลัก</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="VRTour.php">VR Tour</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="Booking.php">วิธีการจองห้องต่าง ๆ</a>
-                </li>
-                <li class="nav-item">
-                    <form action="Searching.php" method="post">
-                    <a class="nav-search" href="Search.php"><button class="btn btn-light" type="submit"><img src="Resouces/Icons/Search_Black_24dp_X1.png" alt="Search"></button></a>
-                </li>
-            </ul>
-        </nav>
-    </header>
-    <article>
-        <h1>ค้นหา</h1>
-        <div class="Form_Cate">
-            <label for="category">หมวดที่ต้องการค้นหา</label>
-            <select class="form-select" aria-label="Default select example">
-                <option value="ห้อง" selected>ห้อง</option>
-                <option value="บุคลากร">บุคลากร</option>
-                <option value="กิจกรรม">กิจกรรม</option>
-            </select>
+<?php
+require_once("_config.php");
+$title = "ค้นหา";
+
+
+    /*
+    $Keyword        =   $_POST['search'];
+
+    $search = "SELECT * FROM room WHERE R_Name LIKE '%'.$Keyword'%'' ";
+
+    $result = mysqli_query($conn,$search);
+    $num = mysqli_num_rows($result);
+    if($num==0){
+        echo "ไม่มีข้อมูล";
+    }else{
+    }
+    */
+    
+?>
+
+<?php require_once("_header.php"); ?>
+<link href="https://cdn.datatables.net/1.11.3/css/dataTables.bootstrap5.min.css" rel="stylesheet">
+<script src="https://cdn.datatables.net/1.11.3/js/jquery.dataTables.min.js"></script>
+<script src="https://cdn.datatables.net/1.11.3/js/dataTables.bootstrap5.min.js"></script>
+<h1 class="text-center my-4">ค้นหา</h1>
+<div class="container">
+  <div class="row">
+    <div class="col-md-3">
+      <label for="category">หมวดที่ต้องการค้นหา</label>
+        <select class="form-select" onchange="changeType();" id="typeFilter">
+          <option value="room" selected>ห้อง</option>
+          <option value="staff">บุคลากร</option>
+          <option value="event">กิจกรรม</option>
+        </select>
+    </div>
+    <div class="col-md-9">
+      <label for="seacrh">ค้นหา</label>
+        <input type="text" class="form-control" name="search" id="search" placeholder="ชื่อห้อง"/>
+    </div>
+  </div>
+  <hr>
+  <label id="filter" for="filter">ตัวกรอง</label>
+  <div id="roomFilter" style="margin-top: 2%">
+    <div class="row justify-content-center">
+      <label for="filterFloor" class="col-sm-2 col-form-label text-lg-end text-center pt-0">ชั้น</label>
+        <div class="col-sm-6">
+          <?php
+          $select = "SELECT * FROM floorplan WHERE F_ID DESC";
+          foreach ($select as $value) {
+          /*
+          $select = select("floorplan",NULL,"F_ID DESC");
+          foreach ($select as $value) { 
+          */
+          ?>
+      
+        <div class="form-check form-check-inline mr-1">
+          <input class="form-check-input filter" type="checkbox" id="filterFloor<?php echo $value['F_ID']; ?>" name="filterFloor[]" value="<?php echo $value['F_ID']; ?>" checked>
+          <label class="form-check-label" for="filterFloor<?php echo $value['F_ID']; ?>">ชั้น <?php echo $value['F_Name']; ?></label>
         </div>
-       
-        <div class="Form_S">
-            <form method="post" action="">  
-                <label for="seacrh">ค้นหา</label>
-                <input type="text" class="form-control" name="search" id="search" placeholder="ค้นหา.."/>
-                <button type="submit" value="ค้นหา">ค้นหา</button> 
-            </form>
+        <?php } ?>
         </div>
+  </div>
 
-        <div class="room_type">
-            <label for="room_type">ประเภทห้อง</label>
-            <div class="form-check form-switch">
-                <input class="form-check-input" type="checkbox" role="switch" id="flexSwitchCheckDefault" checked>
-                <label class="form-check-label" for="flexSwitchCheckDefault">ห้องเรียน</label>
-            </div>
-            <div class="form-check form-switch">
-                <input class="form-check-input" type="checkbox" role="switch" id="flexSwitchCheckDefault">
-                <label class="form-check-label" for="flexSwitchCheckDefault">ห้องเเล๊ป</label>
-            </div>
-            <div class="form-check form-switch">
-                <input class="form-check-input" type="checkbox" role="switch" id="flexSwitchCheckDefault">
-                <label class="form-check-label" for="flexSwitchCheckDefault">ห้องประชุม</label>
-            </div>
-        </div>
-        
-        <div class="floor">
-            <label for="floor">ชั้นที่</label>
-            <div class="form-check form-switch">
-                <input class="form-check-input" type="checkbox" role="switch" id="flexSwitchCheckCheckedDefault" checked>
-                <label class="form-check-label" for="flexSwitchCheckCheckedDefault">ชั้นที่ 1</label>
-            </div>
-            <div class="form-check form-switch">
-                <input class="form-check-input" type="checkbox" role="switch" id="flexSwitchCheckCheckedDefault">
-                <label class="form-check-label" for="flexSwitchCheckCheckedDefault">ชั้นที่ 2</label>
-            </div>
-            <div class="form-check form-switch">
-                <input class="form-check-input" type="checkbox" role="switch" id="flexSwitchCheckCheckedDefault">
-                <label class="form-check-label" for="flexSwitchCheckCheckedDefault">ชั้นที่ 3</label>
-            </div>
-            <div class="form-check form-switch">
-                <input class="form-check-input" type="checkbox" role="switch" id="flexSwitchCheckCheckedDefault">
-                <label class="form-check-label" for="flexSwitchCheckCheckedDefault">ชั้นที่ 4</label>
-            </div>
-            <div class="form-check form-switch">
-                <input class="form-check-input" type="checkbox" role="switch" id="flexSwitchCheckCheckedDefault">
-                <label class="form-check-label" for="flexSwitchCheckCheckedDefault">ชั้นที่ 5</label>
-            </div>
-        </div>
+      <div class="row justify-content-center" id="filterType">
+        <label for="filterType" class="col-sm-2 col-form-label text-lg-end text-center pt-0">ประเภทห้อง</label>
+          <div class="col-sm-6">
+          <div class="form-check form-check-inline mr-1">
+              <input class="form-check-input filter" type="checkbox" id="filterType1" name="filterType[]" value="1" checked>
+              <label class="form-check-label" for="filterType1">ห้องเรียน</label>
+          </div>
+          <div class="form-check form-check-inline mr-1">
+              <input class="form-check-input filter" type="checkbox" id="filterType2" name="filterType[]" value="2" checked>
+              <label class="form-check-label" for="filterType2">ห้องเเล๊บ</label>
+          </div>
+          <div class="form-check form-check-inline mr-1">
+              <input class="form-check-input filter" type="checkbox" id="filterType3" name="filterType[]" value="3" checked>
+              <label class="form-check-label" for="filterType3">ห้องประชุม</label>
+          </div>
+          <div class="form-check form-check-inline mr-1">
+              <input class="form-check-input filter" type="checkbox" id="filterType4" name="filterType[]" value="4" checked>
+              <label class="form-check-label" for="filterType4">อื่น ๆ</label>
+          </div>
+          </div>
+      </div>
+      <hr style="margin-top: 2%">
 
-    <?php
-        $db_host = '127.0.0.1';
-        $db_user = 'root';
-        $db_password = '';
-        $db_db = 'witthayawiphat';
-        $db_port = 3306;
-
-        $conn = new mysqli(
-            $db_host,
-            $db_user,
-            $db_password,
-            $db_db,
-            $db_port
-        );
-        // Check connection
-        if ($conn->connect_error) {
-        die("Connection failed: " . $conn->connect_error);
-        }
-
-        //$sql = "SELECT R_Name , R_Capacity FROM room WHERE R_Name LIKE '%".$_POST["R_Name"]."%' OR R_Name LIKE '%".$_POST["search"]."%' ";
-        $sql = "SELECT R_Name , R_Capacity FROM room WHERE R_Name LIKE '%".$_POST["R_Name"]."%'";
-        $result = $conn->query($sql);
-
-        //$sql2 = "SELECT F_Image , F_Floor FROM floorplan WHERE F_Floor LIKE '%".$_POST["search"]."%' ";
-        $sql2 = "SELECT P_Name FROM professor WHERE P_Name LIKE '%".$_POST["P_Name"]."%' ";
-        $result2 = $conn->query($sql2);
-
-        if ($result->num_rows > 0) {
-        // output data of each row
-        while($row = $result->fetch_assoc()) {
-
-        $R_Name = $row['R_Name'];
-        $R_Capacity = $row['R_Capacity'];
-        $P_Name = $row['P_Name'];
-
-        echo "
-        <table class='table'>
-            <thead>
-                <tr>
-                    <th>ชื่อห้อง</th>
-                    <th>จุได้</th>
-                    <th>ผู้รับชอบห้องโดย</th>
-                <tr>
-            </thead>
-                <tr>
-                    <td>$R_Name</td> 
-                    <td>$R_Capacity</td> 
-                    <td>$S_Name</td>
-                </tr>
+      <div class="table-responsive p-2" id="table">
+        <table class="table table-light table-hover" id="roomTable">
+          <thead>
+            <tr>
+                <th scope="col" width="5%" data-orderable="false"></th>
+                <th scope="col" width="10%" data-orderable="false"></th>
+                <th scope="col" width="15%">ห้อง</th>
+                <th scope="col" width="10%" data-orderable="false">ความจุของห้อง</th>
+                <th scope="col" width="25%" data-orderable="false">ผู้รับผิดชอบเเละดูเเลห้อง</th>
+                <th scope="col" width="15%" data-orderable="false"></th>
+            </tr>
+            <tr>
+            <?php
+              $sql = "SELECT room.R_ID, room.R_Name, room.R_Capacity, staff.S_Name
+              FROM room 
+              INNER JOIN staff ON room.R_Staff = staff.S_ID";
+              $result = mysqli_query($conn,$sql);
+              while($row = mysqli_fetch_array($result)) {
+              ?>
+              <td scope="col" width="5%" data-orderable="false"></td>
+              <td scope="col" width="10%" data-orderable="false"><?php echo $row['R_ID']; ?></td>
+              <td scope="col" width="15%"><?php echo $row['R_Name']; ?></td>
+              <td scope="col" width="10%" data-orderable="false"><?php echo $row['R_Capacity']; ?> คน/ที่นั่ง</td>
+              <td scope="col" width="25%" data-orderable="false"><?php echo $row['S_Name']; ?></td>
+              <td scope="col" width="15%" data-orderable="false"><div class="btn-group btn-group-sm" role="group"><a href="<?php echo url() ?>viewRoom.php?id=<?php echo $row['R_ID']; ?>" target="_blank" class="btn btn-primary w-100">ดูรายละเอียด</a></div></td>
+            </tr>
+            <?php 
+            } 
+            ?>
+          </thead>
         </table>
-        ";}
+      </div> 
+    </div>
+    
+    <div id="staffFilter">
+      <div class="table-responsive p-2" id="table">
+        <table class="table table-light table-hover " id="staffTable">
+          <thead>
+            <tr>
+              <th scope="col" width="5%" data-orderable="false"></th>
+              <th scope="col" width="10%" data-orderable="false"></th>
+              <th scope="col" width="15%">ชื่อบุคลากร</th>
+              <th scope="col" width="20%" data-orderable="false">ตำเเหน่ง</th>
+              <th scope="col" width="20%" data-orderable="false">ความเชี่ยวชาญ</th>
+              <th scope="col" width="15%" data-orderable="false">ห้องพัก , โต๊ะทำงาน</th>
+              <th scope="col" width="15%" data-orderable="false"></th>
+            </tr>
+            <tr>
+            <?php
+              $sql = "SELECT staff.S_ID, staff.S_Name, staff.S_Position, staff.S_Skill, room.R_Name
+              FROM staff
+              INNER JOIN room ON room.R_Staff = staff.S_ID";
+              $result = mysqli_query($conn,$sql);
+              while($row = mysqli_fetch_array($result)){
+              ?>
+              <td scope="col" width="5%" data-orderable="false"></td>
+              <td scope="col" width="10%" data-orderable="false"><?php echo $row['S_ID']; ?></td>
+              <td scope="col" width="15%"><?php echo $row['S_Name']; ?></td>
+              <td scope="col" width="20%" data-orderable="false"><?php echo $row['S_Position']; ?></td>
+              <td scope="col" width="20%" data-orderable="false"><?php echo $row['S_Skill']; ?></td>
+              <td scope="col" width="15%" data-orderable="false"><?php echo $row['R_Name']; ?></td>
+              <td scope="col" width="15%" data-orderable="false"><div class="btn-group btn-group-sm" role="group"><a href="<?php echo url() ?>viewStaff.php?id=<?php echo $row['S_ID']; ?>" target="_blank" class="btn btn-primary w-100">ดูรายละเอียด</a></div></td>
+            </tr>
+            <?php 
+            } 
+            ?>
+          </thead>
+        </table>
+      </div> 
+    </div>
+    <div id="eventFilter">
+      <div class="table-responsive p-2" id="table">
+        <table class="table table-light table-hover" id="eventTable">
+          <thead>
+            <tr>
+              <th scope="col" width="5%" data-orderable="false"></th>
+              <th scope="col" width="10%" data-orderable="false"></th>
+              <th scope="col" width="10%">จัดวันที่</th>
+              <th scope="col" width="10%" data-orderable="false">เวลา</th>
+              <th scope="col" width="10%" data-orderable="false">จัดที่ห้อง</th>
+              <th scope="col" width="20%" data-orderable="false">ชื่อกิจกรรม</th>
+              <th scope="col" width="20%" data-orderable="false">รายละเอียดกิจกรรม</th>
+              <th scope="col" width="15%" data-orderable="false"></th>
+            </tr>
+            <tr>
+            <?php
+              $sql = "SELECT event.E_ID, event.E_Date, event.E_Time, room.R_Name, event.E_Name, event.E_Description
+              FROM event
+              INNER JOIN room ON room.R_ID = event.E_Room";
+              $result = mysqli_query($conn,$sql);
+              while($row = mysqli_fetch_array($result)){
+              ?>
+              <th scope="col" width="5%" data-orderable="false"></th>
+              <td scope="col" width="10%" data-orderable="false"><?php echo $row['E_ID']; ?></td>
+              <td scope="col" width="10%"><?php echo $row['E_Date']; ?></td>
+              <td scope="col" width="10%" data-orderable="false"><?php echo $row['E_Time']; ?></td>
+              <td scope="col" width="10%" data-orderable="false"><?php echo $row['R_Name']; ?></td>
+              <td scope="col" width="20%" data-orderable="false"><?php echo $row['E_Name']; ?></td>
+              <td scope="col" width="20%" data-orderable="false"><?php echo $row['E_Description']; ?></td>
+              <td scope="col" width="15%" data-orderable="false"><div class="btn-group btn-group-sm" role="group"><a href="<?php echo url() ?>viewEvent.php?id=<?php echo $row['E_ID']; ?>" target="_blank" class="btn btn-primary w-100">ดูรายละเอียด</a></div></td>
+            </tr>
+            <?php 
+            } 
+            ?>
+          </thead>
+        </table>
+      </div> 
+    </div>
+</div>
+<?php require_once("_footer.php"); ?>
 
-        } if ($result2->num_rows > 0) {
-        // output data of each row
-        while($row = $result->fetch_assoc()) {
+<script>
+function changeType(){
+    if($('#typeFilter').val() == 'room'){
+        $('#roomFilter').show();
+        $('#roomTable').show();
+        $('#staffFilter').hide();
+        $('#eventFilter').hide();
+        $('#search').attr("placeholder", "ชื่อห้อง");
+        
+    }
+    else if($('#typeFilter').val() == 'staff'){
+        $('#filter').hide();
+        $('#filterType').hide();
+        $('#roomTable').hide();
+        $('#staffFilter').show();
+        $('#eventFilter').hide();
+        $('#search').attr("placeholder", "ชื่อบุคลากร");
 
-        //$F_Image = $row['F_Image'];
-        $F_Floor = $row['F_Floor'];
+    }
+    else if($('#typeFilter').val() == 'event'){
+        $('#filter').hide();
+        $('#filterType').hide();
+        $('#roomFilter').hide();
+        $('#staffFilter').hide();
+        $('#eventFilter').show();
+        $('#search').attr("placeholder", "ชื่อกิจกรรม");
+    }
+}
 
-        echo "
-        <div class='row row-cols-1 row-cols-md-3 g-4'>
-            <div class='col'>
-                <div class='card h-100'>
-                    <img src='Resouces/Images/Computer_Lab.jpg' class='card-img-top' alt='Image' width='300px' height='300px'>
-                    <div class='card-body'>
-                        <h5 class='card-title'>ชั้นที่ $F_Floor </h5> 
-                    </div>
-                </div>
-            </div>
-        </div>
-        ";}
-        } else {
-        echo "0 results";
-        }
-        $conn->close();
-        ?>
-         
+setTimeout(function(){
+  changeType('room');
+}, 200);
+</script>
         <?php
         // $conn=mysqli_connect("localhost","root","","witthayawiphat");
 
@@ -215,8 +272,3 @@
             </ul>
         </nav>
         -->
-        
-    </article>
-
-</body>
-</html>
